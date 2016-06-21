@@ -18,11 +18,9 @@
 
 'use strict'
 
-var pkg = require('../package.json')
-var config = require('../src/config.json')
+var pkg = require('../../package.json')
 var env = (process.env.NODE_ENV || '').trim().toLowerCase() || 'development' /* or 'production' */
 
-var _ = require('lodash')
 var metalsmith = require('metalsmith')
 var markdown = require('metalsmith-markdown')
 var publish = require('metalsmith-publish')
@@ -36,26 +34,24 @@ var setdate = require('./plugins/metalsmith-setdate')
 var moremeta = require('./plugins/metalsmith-moremeta')
 var debug = require('./plugins/metalsmith-debug')
 
-metalsmith(__dirname + '/..')
-    .clean(env === 'production')
-    .source(pkg.config.dir.html)
-    .destination(pkg.config.dir.dist)
-    .metadata(_.merge(config.metadata, config[env]))
-    .use(publish())
-    .use(setdate())
-    .use(collections(config.collections))
-    .use(markdown())
-    .use(permalinks({
-        pattern: ':mainCollection/:title'
-    }))
-    .use(wordcount({
-        raw: true
-    }))
-    .use(moremeta())
-    .use(inplace(config.template))
-    .use(layouts(config.template))
-    .use(htmlmin())
-    .use(debug())
-    .build(function(err) {
-        if (err) throw err
-    })
+metalsmith(__dirname + '/../..')
+.clean(env === 'production')
+.source(pkg.config.dir.html)
+.destination(pkg.config.dir.dist)
+.metadata(pkg)
+.use(publish())
+.use(setdate())
+.use(collections(pkg.collections))
+.use(markdown())
+.use(permalinks({pattern: ':mainCollection/:title'}))
+.use(wordcount({
+    raw: true
+}))
+.use(moremeta())
+.use(inplace(pkg.config.template))
+.use(layouts(pkg.config.template))
+.use(htmlmin())
+.use(debug())
+.build(function(err) {
+    if (err) throw err
+})
