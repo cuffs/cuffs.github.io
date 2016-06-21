@@ -1,0 +1,8 @@
+script: npm run deploy
+language: node_js
+node_js:
+- '5'
+env:
+  global:
+  - GH_REF: github.com/cuffs/cuffs.github.io.git
+  - secure: E+OCiUpc8VsUCdqdb+OiI8fRcFnfODjvM8BnDYLNFBb6ja2nqjkzS+iKtsgkqrjKceIDVduzIJVevChx9CyJYpTwTrgbRPIxwZWaeGhXHzRoSHiQO3wHXpoRF8OOdZhnFvNfKXXEpi1VbGmsfWieSD+5xTzMJpsIJbSHl05VNOCa2OX6R3qz55kr5CMcWbaAr/TXGnAjxwIYoqAnNMMU25m/Kox+nHXhjC/EaaWgEIyaOKQv/YH1g1Z5JV4exbS28/T/ybKwaSO1zWamhdrDhfV2UTrky5/p4/9yV9aSMtB6uB6YlAnBmzwlzjvArwbYOw+nSl4qmZyBPBnLJdy/f75Sk9SalZ1NfswLmZQr0o4KeC1UFVzBRZUBJOwplR6nsW3pSemVeJJci+T4TQ97aJkDWy7GGN12BngJJffv1Cg6h5Y1DKRvSgstB5VEjiTBs4P41UJh8d7QC+/3PKiHAL9w4GqP4PN3brcgaAsomVcIAzIhRlBEjzzM+odS8E+nc9BrVZ0dxC+LZzXU9shFzyRsyCvZNHa7wO4sOSU0K3wYjPtRMb2oJrIvXMTtpb/adiZ6kljWVwr7hDlun4JtolG7Jwf1jJ6qkPnN04ZWA5GL//Bv2zA9N6sKa6YpW5c7ETyBt4YwN3LY+2RscTsF38QAiEDG7IuYRQFhRD7oIP0=

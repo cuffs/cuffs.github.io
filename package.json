@@ -1,0 +1,107 @@
+{
+  "name": "cuffs.github.io",
+  "version": "1.0.0",
+  "description": "Cuffs website.",
+  "homepage": "https://github.com/cuffs/cuffs.github.io#readme",
+  "main": "build.js",
+  "repository" : {
+    "type" : "git",
+    "url" : "cuffs/cuffs.github.io.git"
+  },
+  "company": "Web Semantics, Inc.",
+  "config" : {
+    "minify" : true,
+    "deploy": {
+      "name": "iAyeBot",
+      "email": "iayebot@websemantics.ca",
+      "src": "source",
+      "dest": "master",
+      "message": "Deploy to master"
+    },
+    "semantic" : {
+      "install" : true,
+      "src" : "./node_modules/semantic-ui/src/",
+      "config" : "./src/less/semantic/theme.config"
+    },
+    "dir": {
+      "base": "/",
+      "src": "./src/",
+      "html": "./src/html/",
+      "templates": "./src/template/",
+      "partials": "./src/template/partials/",
+      "dist": "./public/"
+    }
+  },
+  "scripts": {
+    "postinstall": "[ \"$npm_package_config_semantic_install\" = \"true\" ] && npm run semantic",
+    "clean": "rm -rf $npm_package_config_dir_dist",
+    "build": "npm run build:copy -s && npm run build:js -s && npm run build:css -s && npm run build:html -s",
+    "build:init": "mkdir -p ${npm_package_config_dir_dist}js && mkdir -p ${npm_package_config_dir_dist}css",
+    "build:copy": "npm run build:copy:assets -s && npm run build:copy:fonts -s && npm run build:copy:default -s",
+    "build:copy:default": "cp -r ./README.md $npm_package_config_dir_dist",
+    "build:copy:assets": "cp -r ${npm_package_config_dir_src}assets/* $npm_package_config_dir_dist",
+    "build:copy:fonts": "[ \"$npm_package_config_semantic_install\" = \"true\" ] && npm run semantic:fonts -s",
+    "build:html": "node ./lib/build.js",
+    "build:css": "[ \"$npm_package_config_minify\" = \"true\" ] &&  npm run build:css:minify -s || npm run build:css:default -s",
+    "build:css:default": "lessc ${npm_package_config_dir_src}less/index.less ${npm_package_config_dir_dist}css/styles.css",
+    "build:css:minify": "lessc ${npm_package_config_dir_src}less/index.less | uglifycss > ${npm_package_config_dir_dist}css/styles.css",
+    "build:js": "[ \"$npm_package_config_minify\" = \"true\" ] && npm run build:js:minify -s || npm run build:js:default -s",
+    "build:js:default": "browserify ${npm_package_config_dir_src}js/index.js -o ${npm_package_config_dir_dist}js/index.js",
+    "build:js:minify": "browserify ${npm_package_config_dir_src}js/index.js | uglifyjs -mc > ${npm_package_config_dir_dist}js/index.js",
+    "build:development": "NODE_ENV=development npm run build",
+    "build:production": "NODE_ENV=production npm run build",
+    "prebuild": "npm run clean -s && npm run build:init -s",
+    "deploy": "[ ${GH_TOKEN} ] && npm run deploy:travis -s || npm run deploy:local -s",
+    "deploy:local": "repository=$(echo $npm_package_repository_url | sed 's/.*+//') && cd $npm_package_config_dir_dist && git push --force --quiet $repository $npm_package_config_deploy_src:$npm_package_config_deploy_dest > /dev/null 2>&1",
+    "deploy:travis": "cd $npm_package_config_dir_dist && git push --force --quiet \"https://${GH_TOKEN}@${GH_REF}\" $npm_package_config_deploy_src:$npm_package_config_deploy_dest > /dev/null 2>&1",
+    "predeploy": "npm run build && cd $npm_package_config_dir_dist && git init && git config user.name $npm_package_config_deploy_name && git config user.email $npm_package_config_deploy_email && git add . && git commit -m \"$npm_package_config_deploy_message\"",
+    "semantic": "npm install semantic-ui",
+    "semantic:init": "mkdir -p './semantic/src/definitions' && echo '{\"base\":\"semantic/\",\"paths\":{\"source\":{\"config\":\"src/theme.config\",\"definitions\":\"src/definitions/\",\"site\":\"src/site/\",\"themes\":\"src/themes/\"},\"output\":{\"packaged\":\"dist/\",\"uncompressed\":\"dist/components/\",\"compressed\":\"dist/components/\",\"themes\":\"dist/themes/\"},\"clean\":\"dist/\"},\"permission\":false,\"rtl\":false}' > './semantic.json'",
+    "semantic:fonts": "cp -r ${npm_package_config_semantic_src}themes/default/assets/fonts ${npm_package_config_dir_dist}fonts/semantic",
+    "presemantic" : "npm run semantic:init -s",
+    "postsemantic" : "echo \"@import '${npm_package_config_semantic_config}';\" > \"${npm_package_config_semantic_src}theme.config\"",
+    "watch": "nodemon -q -w $npm_package_config_dir_src --ext '.' --exec 'npm run build'",
+    "watch:js": "nodemon -q -w ${npm_package_config_dir_src}js --ext '.' --exec 'npm run build:js'",
+    "watch:css": "nodemon -q -w ${npm_package_config_dir_src}less --ext '.' --exec 'npm run build:css'",
+    "serve": "http-server -p 9090 $npm_package_config_dir_dist",
+    "live-reload": "live-reload --port 9091 $npm_package_config_dir_dist",
+    "open": "opener http://localhost:9090",
+    "dev": "npm run open -s && parallelshell 'npm run live-reload -s' 'npm run serve -s' 'npm run watch -s'",
+    "test": "echo 'Error: no test specified' && exit 1"
+  },
+  "bugs": {
+    "url": "https://github.com/cuffs/cuffs.github.io/issues"
+  },
+  "keywords": [
+    "ibuild.io",
+    "cuffs.github.io"
+  ],
+  "author": "Adnan M.Sagar, PhD.",
+  "license": "MIT",
+  "devDependencies": {
+    "nodemon": "*",
+    "http-server": "*",
+    "live-reload": "*",
+    "opener": "*",
+    "parallelshell": "*"
+  },
+  "dependencies": {
+    "jquery": "^2.1.4",
+    "google-code-prettify": "*",
+    "bricklayer": "*",
+    "less": "*",
+    "uglifyjs": "*",
+    "uglifycss": "*",
+    "browserify": "*",
+    "handlebars": "^4.0.5",
+    "metalsmith": "^2.1.0",
+    "metalsmith-collections": "^0.7.0",
+    "metalsmith-html-minifier": "^2.0.0",
+    "metalsmith-in-place": "^1.4.3",
+    "metalsmith-layouts": "^1.6.4",
+    "metalsmith-markdown": "^0.2.1",
+    "metalsmith-permalinks": "^0.5.0",
+    "metalsmith-publish": "^0.1.3",
+    "metalsmith-word-count": "0.0.4"
+  }
+}
